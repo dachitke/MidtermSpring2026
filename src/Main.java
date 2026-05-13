@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
+
 public class Main {
     static ArrayList<String> playerNames = new ArrayList<String>();
     static ArrayList<Boolean> humanPlayers = new ArrayList<Boolean>();
@@ -20,8 +21,8 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        int bots = 3;
-        int games = 1;
+        int bots = 4;
+        int games = 3;
         boolean human = false;
         long seed = System.currentTimeMillis();
 
@@ -127,10 +128,7 @@ public class Main {
             String name = playerNames.get(currentPlayer);
             ArrayList<String> hand = hands.get(currentPlayer);
 
-            if (!quiet) {
-                System.out.println("\nUp card: " + upCard + (calledColor.equals("") ? "" : " called " + calledColor));
-                System.out.println(name + " hand: " + join(hand));
-            }
+            showTurnInfo(name, hand);
 
             int chosen = -1;
             if (humanPlayers.get(currentPlayer).booleanValue()) {
@@ -272,6 +270,16 @@ public class Main {
         }
         if (!quiet) {
             System.out.println("Game stopped at safety limit.");
+        }
+    }
+    static void showTurnInfo(String name, ArrayList<String> hand) {
+        if (!quiet) {
+            System.out.println(
+                    "\nUp card: " + upCard +
+                            (calledColor.equals("") ? "" : " called " + calledColor)
+            );
+
+            System.out.println(name + " hand: " + join(hand));
         }
     }
 
