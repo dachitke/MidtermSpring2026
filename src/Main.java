@@ -306,48 +306,46 @@ public class Main {
     }
 
     static int chooseBotCard(ArrayList<String> hand) {
+        int bestIndex = -1;
+        int bestPriority = -1;
+
         for (int i = 0; i < hand.size(); i++) {
             String card = hand.get(i);
-            boolean ok = false;
-            if (card.startsWith("W")) ok = true;
-            else if (color(card).equals(color(upCard))) ok = true;
-            else if (!calledColor.equals("") && color(card).equals(calledColor)) ok = true;
-            else if (rank(card).equals(rank(upCard)) && !rank(card).equals("NUMBER")) ok = true;
-            else if (rank(card).equals("NUMBER") && rank(upCard).equals("NUMBER") && number(card) == number(upCard)) ok = true;
-            if (rank(card).equals("DRAW_TWO") && ok) {
-                return i;
+
+            if (!isLegal(card, upCard, calledColor)) {
+                continue;
+            }
+
+            int priority = cardPriority(card);
+
+            if (priority > bestPriority) {
+                bestPriority = priority;
+                bestIndex = i;
             }
         }
-        for (int i = 0; i < hand.size(); i++) {
-            String card = hand.get(i);
-            boolean ok = false;
-            if (card.startsWith("W")) ok = true;
-            else if (color(card).equals(color(upCard))) ok = true;
-            else if (!calledColor.equals("") && color(card).equals(calledColor)) ok = true;
-            else if (rank(card).equals(rank(upCard)) && !rank(card).equals("NUMBER")) ok = true;
-            else if (rank(card).equals("NUMBER") && rank(upCard).equals("NUMBER") && number(card) == number(upCard)) ok = true;
-            if (rank(card).equals("SKIP") && ok) {
-                return i;
-            }
+
+        return bestIndex;
+    }
+    static int cardPriority(String card) {
+        String r = rank(card);
+
+        if (r.equals("DRAW_TWO")) {
+            return 4;
         }
-        for (int i = 0; i < hand.size(); i++) {
-            String card = hand.get(i);
-            boolean ok = false;
-            if (card.startsWith("W")) ok = true;
-            else if (color(card).equals(color(upCard))) ok = true;
-            else if (!calledColor.equals("") && color(card).equals(calledColor)) ok = true;
-            else if (rank(card).equals(rank(upCard)) && !rank(card).equals("NUMBER")) ok = true;
-            else if (rank(card).equals("NUMBER") && rank(upCard).equals("NUMBER") && number(card) == number(upCard)) ok = true;
-            if (rank(card).equals("NUMBER") && ok) {
-                return i;
-            }
+
+        if (r.equals("SKIP")) {
+            return 3;
         }
-        for (int i = 0; i < hand.size(); i++) {
-            if (hand.get(i).startsWith("W")) {
-                return i;
-            }
+
+        if (r.equals("NUMBER")) {
+            return 2;
         }
-        return -1;
+
+        if (card.startsWith("W")) {
+            return 1;
+        }
+
+        return 0;
     }
 
     static int askHuman(ArrayList<String> hand) {
