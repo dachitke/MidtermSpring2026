@@ -22,7 +22,7 @@ public class Main {
 
     public static void main(String[] args) {
         int bots = 4;
-        int games = 3;
+        int games = 1;
         boolean human = false;
         long seed = System.currentTimeMillis();
 
@@ -131,29 +131,10 @@ public class Main {
             showTurnInfo(name, hand);
 
             int chosen = -1;
-            if (humanPlayers.get(currentPlayer).booleanValue()) {
-                chosen = askHuman(hand);
-            } else {
-                chosen = chooseBotCard(hand);
-            }
+            chosen = chooseMove(hand);
 
             if (chosen == -1) {
-                String drawn = draw();
-                hand.add(drawn);
-                if (!quiet) {
-                    System.out.println(name + " draws " + drawn);
-                }
-                if (isLegal(drawn, upCard, calledColor)) {
-                    if (!humanPlayers.get(currentPlayer).booleanValue()) {
-                        chosen = hand.size() - 1;
-                    } else {
-                        System.out.print("Play drawn card " + drawn + "? y/n: ");
-                        String answer = scanner.nextLine();
-                        if (answer.equalsIgnoreCase("y") || answer.equalsIgnoreCase("yes")) {
-                            chosen = hand.size() - 1;
-                        }
-                    }
-                }
+                chosen = handleDraw(hand, name);
             }
 
             if (chosen >= 0) {
@@ -217,7 +198,7 @@ public class Main {
                     System.out.println(name + " says UNO!");
                 }
 
-                if (hand.size() == 0) {
+                if (hand.isEmpty()) {
                     int points = 0;
                     for (int i = 0; i < hands.size(); i++) {
                         if (i != currentPlayer) {
@@ -282,14 +263,46 @@ public class Main {
             System.out.println(name + " hand: " + join(hand));
         }
     }
+    static int chooseMove(ArrayList<String> hand) {
+        if (humanPlayers.get(currentPlayer).booleanValue()) {
+            return askHuman(hand);
+        }
+        return chooseBotCard(hand);
+    }
+
+    static int handleDraw(ArrayList<String> hand, String name) {
+        String drawn = draw();
+        hand.add(drawn);
+
+        if (!quiet) {
+            System.out.println(name + " draws " + drawn);
+        }
+
+        if (!isLegal(drawn, upCard, calledColor)) {
+            return -1;
+        }
+
+        if (!humanPlayers.get(currentPlayer).booleanValue()) {
+            return hand.size() - 1;
+        }
+
+        System.out.print("Play drawn card " + drawn + "? y/n: ");
+        String answer = scanner.nextLine();
+
+        if (answer.equalsIgnoreCase("y") || answer.equalsIgnoreCase("yes")) {
+            return hand.size() - 1;
+        }
+
+        return -1;
+    }
 
     static String draw() {
-        if (deck.size() == 0) {
+        if (deck.isEmpty()) {
             deck.addAll(discard);
             discard.clear();
             Collections.shuffle(deck, random);
         }
-        if (deck.size() == 0) {
+        if (deck.isEmpty()) {
             return "W";
         }
         return deck.remove(0);
