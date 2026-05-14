@@ -85,24 +85,7 @@ public class Main {
 
     static void playGame() {
         deck.clear();
-        String[] colors = {"R", "Y", "G", "B"};
-        for (int c = 0; c < colors.length; c++) {
-            deck.add(colors[c] + "0");
-            for (int n = 1; n <= 9; n++) {
-                deck.add(colors[c] + n);
-                deck.add(colors[c] + n);
-            }
-            deck.add(colors[c] + "S");
-            deck.add(colors[c] + "S");
-            deck.add(colors[c] + "R");
-            deck.add(colors[c] + "R");
-            deck.add(colors[c] + "+2");
-            deck.add(colors[c] + "+2");
-        }
-        for (int i = 0; i < 4; i++) {
-            deck.add("W");
-            deck.add("W4");
-        }
+        buildDeck();
         Collections.shuffle(deck, random);
         discard.clear();
         for (int i = 0; i < hands.size(); i++) {
@@ -296,6 +279,30 @@ public class Main {
             return "W";
         }
         return deck.remove(0);
+    }
+    static void buildDeck() {
+        String[] colors = {"R", "Y", "G", "B"};
+
+        for (int c = 0; c < colors.length; c++) {
+            deck.add(colors[c] + "0");
+
+            for (int n = 1; n <= 9; n++) {
+                deck.add(colors[c] + n);
+                deck.add(colors[c] + n);
+            }
+
+            deck.add(colors[c] + "S");
+            deck.add(colors[c] + "S");
+            deck.add(colors[c] + "R");
+            deck.add(colors[c] + "R");
+            deck.add(colors[c] + "+2");
+            deck.add(colors[c] + "+2");
+        }
+
+        for (int i = 0; i < 4; i++) {
+            deck.add("W");
+            deck.add("W4");
+        }
     }
 
     static int chooseBotCard(ArrayList<String> hand) {
