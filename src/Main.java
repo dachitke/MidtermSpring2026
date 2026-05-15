@@ -21,7 +21,7 @@ public class Main {
     static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        int bots = 4;
+        int bots = 3;
         int games = 1;
         boolean human = false;
         long seed = System.currentTimeMillis();
