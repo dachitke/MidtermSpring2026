@@ -84,26 +84,9 @@ public class Main {
     }
 
     static void playGame() {
-        deck.clear();
-        buildDeck();
-        Collections.shuffle(deck, random);
-        discard.clear();
-        for (int i = 0; i < hands.size(); i++) {
-            hands.get(i).clear();
-        }
-        for (int i = 0; i < playerNames.size(); i++) {
-            for (int j = 0; j < 7; j++) {
-                hands.get(i).add(draw());
-            }
-        }
-        upCard = draw();
-        while (upCard.startsWith("W")) {
-            discard.add(upCard);
-            upCard = draw();
-        }
-        calledColor = "";
-        direction = 1;
-        currentPlayer = random.nextInt(playerNames.size());
+
+        startRoundSetup();
+
 
         int guard = 0;
         while (guard < 3000) {
@@ -195,6 +178,33 @@ public class Main {
         if (!quiet) {
             System.out.println("Game stopped at safety limit.");
         }
+    }
+    static void startRoundSetup() {
+        deck.clear();
+        buildDeck();
+        Collections.shuffle(deck, random);
+
+        discard.clear();
+
+        for (int i = 0; i < hands.size(); i++) {
+            hands.get(i).clear();
+        }
+
+        for (int i = 0; i < playerNames.size(); i++) {
+            for (int j = 0; j < 7; j++) {
+                hands.get(i).add(draw());
+            }
+        }
+
+        upCard = draw();
+        while (upCard.startsWith("W")) {
+            discard.add(upCard);
+            upCard = draw();
+        }
+
+        calledColor = "";
+        direction = 1;
+        currentPlayer = random.nextInt(playerNames.size());
     }
     static void showTurnInfo(String name, ArrayList<String> hand) {
         if (!quiet) {
