@@ -227,12 +227,7 @@ public class Main {
     }
 
     static int handleDraw(ArrayList<String> hand, String name) {
-        String drawn = draw();
-        hand.add(drawn);
-
-        if (!quiet) {
-            System.out.println(name + " draws " + drawn);
-        }
+        String drawn = drawCardToHand(hand, name);
 
         if (!isLegal(drawn, upCard, calledColor)) {
             return -1;
@@ -250,6 +245,16 @@ public class Main {
         }
 
         return -1;
+    }
+    static String drawCardToHand(ArrayList<String> hand, String name) {
+        String drawn = draw();
+        hand.add(drawn);
+
+        if (!quiet) {
+            System.out.println(name + " draws " + drawn);
+        }
+
+        return drawn;
     }
     static void applyCardEffect(String card) {
         String rank = rank(card);
@@ -305,6 +310,7 @@ public class Main {
         }
         return deck.remove(0);
     }
+
     static void buildDeck() {
         String[] colors = {"R", "Y", "G", "B"};
 
