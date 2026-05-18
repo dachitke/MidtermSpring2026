@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class BotPlayer extends Player {
 
     private final GameRules gameRules = new GameRules();
@@ -6,7 +8,7 @@ public class BotPlayer extends Player {
         super(name);
     }
 
-    public int chooseMove(Card upCard) {
+    public int chooseMove(ArrayList<String> hand, String upCard) {
         for (int i = 0; i < hand.size(); i++) {
             if (gameRules.canPlay(hand.get(i), upCard)) {
                 return i;

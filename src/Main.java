@@ -20,6 +20,8 @@ public class Main {
     static Random random = new Random();
     static Scanner scanner = new Scanner(System.in);
 
+    static GameRules gameRules = new GameRules();
+
     public static void main(String[] args) {
         int bots = 3;
         int games = 1;
@@ -229,11 +231,11 @@ public class Main {
     static int handleDraw(ArrayList<String> hand, String name) {
         String drawn = drawCardToHand(hand, name);
 
-        if (!isLegal(drawn, upCard, calledColor)) {
+        if (!gameRules.canPlay(drawn, upCard)) {
             return -1;
         }
 
-        if (!humanPlayers.get(currentPlayer).booleanValue()) {
+        if (!isHuman()) {
             return hand.size() - 1;
         }
 
