@@ -217,10 +217,13 @@ public class Main {
         }
     }
     static int chooseMove(ArrayList<String> hand) {
-        if (humanPlayers.get(currentPlayer).booleanValue()) {
+        if (isHuman()) {
             return askHuman(hand);
         }
         return chooseBotCard(hand);
+    }
+    static boolean isHuman() {
+        return humanPlayers.get(currentPlayer);
     }
 
     static int handleDraw(ArrayList<String> hand, String name) {
