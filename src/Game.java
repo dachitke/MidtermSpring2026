@@ -1,33 +1,24 @@
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Game {
 
-    private ArrayList<Player> players = new ArrayList<>();
-    private Deck deck;
-    private Card upCard;
+    ArrayList<String> playerNames = new ArrayList<>();
+    ArrayList<Boolean> humanPlayers = new ArrayList<>();
+    ArrayList<ArrayList<String>> hands = new ArrayList<>();
+    ArrayList<String> deck = new ArrayList<>();
+    ArrayList<String> discard = new ArrayList<>();
+    int[] scores = new int[10];
 
-    public Game() {
-        deck = new Deck(new Random());
-    }
+    int currentPlayer = 0;
+    int direction = 1;
 
-    public void setup() {
-        players.add(new HumanPlayer("You"));
-        players.add(new BotPlayer("Bot1"));
-        players.add(new BotPlayer("Bot2"));
+    String upCard = "";
+    String calledColor = "";
 
-        for (Player p : players) {
-            for (int i = 0; i < 7; i++) {
-                p.drawCard(deck);
-            }
-        }
+    boolean quiet = false;
 
-        upCard = deck.draw();
-    }
-
-    public void start() {
-        while (true) {
-            // turn loop
-        }
-    }
+    Random random = new Random();
+    Scanner scanner = new Scanner(System.in);
 }

@@ -1,25 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 
 
 public class Main {
-    static ArrayList<String> playerNames = new ArrayList<String>();
-    static ArrayList<Boolean> humanPlayers = new ArrayList<Boolean>();
-    static ArrayList<ArrayList<String>> hands = new ArrayList<ArrayList<String>>();
-    static ArrayList<String> deck = new ArrayList<String>();
-    static ArrayList<String> discard = new ArrayList<String>();
-    static int[] scores = new int[10];
-    static int currentPlayer = 0;
-    static int direction = 1;
-    static String upCard = "";
-    static String calledColor = "";
-    static boolean quiet = false;
-    static Random random = new Random();
-    static Scanner scanner = new Scanner(System.in);
-
     static GameRules gameRules = new GameRules();
 
     public static void main(String[] args) {
