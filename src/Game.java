@@ -29,13 +29,14 @@ public class Game {
     GameRules gameRules = new GameRules();
 
 
-    public Game(long seed) {
+    public Game(int bots, boolean human, long seed) {
         this.random = new Random(seed);
+        setupPlayers(bots, human);
     }
 
     // main game
-    public void playGame(int bots, boolean human) {
-        setupPlayers(bots, human);
+    public void playGame() {
+
         startRoundSetup();
 
         int guard = 0;
