@@ -5,7 +5,7 @@ public class GameRules {
             return false;
         }
 
-        if ("W".equals(card)) {
+        if ("W".equals(card)|| "W4".equals(card)) {
             return true;
         }
 
@@ -27,6 +27,6 @@ public class GameRules {
         if (card.endsWith("S")) return "SKIP";
         if (card.endsWith("R")) return "REVERSE";
         if (card.endsWith("+2")) return "DRAW_TWO";
-        return "NUMBER";
+        return String.valueOf(card.charAt(card.length() - 1));
     }
 }
