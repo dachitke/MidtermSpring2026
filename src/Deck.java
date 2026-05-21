@@ -28,6 +28,7 @@ public class Deck {
         for (int i = 0; i < 4; i++) {
             cards.add(new Card("W", ""));
         }
+        cards.add(new Card("W", "4"));
     }
 
     public void shuffle() {

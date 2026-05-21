@@ -1,6 +1,6 @@
-public class GameRules {
+public  class GameRules {
 
-    public boolean canPlay(String card, String upCard) {
+    public boolean canPlay(String card, String upCard, String calledColor) {
         if (card == null || upCard == null) {
             return false;
         }
@@ -10,7 +10,8 @@ public class GameRules {
         }
 
         return color(card).equals(color(upCard))
-                || rank(card).equals(rank(upCard));
+                || rank(card).equals(rank(upCard))
+                || (calledColor != null && color(card).equals(calledColor));
     }
 
     private String color(String card) {

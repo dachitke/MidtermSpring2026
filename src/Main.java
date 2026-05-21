@@ -1,7 +1,7 @@
 public class Main {
 
     public static void main(String[] args) {
-        int bots = 3;
+        int bots = 4;
         int games = 1;
         boolean human = false;
         long seed = System.currentTimeMillis();

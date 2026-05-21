@@ -82,7 +82,7 @@ public class Game {
 
         String card = hand.get(chosen);
 
-        if (!gameRules.canPlay(card, upCard)) {
+        if (!gameRules.canPlay(card, upCard,calledColor)) {
             if (!quiet) {
                 System.out.println(name + " played illegal card " + card);
             }
@@ -232,7 +232,7 @@ public class Game {
     int handleDraw(ArrayList<String> hand, String name) {
         String drawn = drawCardToHand(hand, name);
 
-        if (!gameRules.canPlay(drawn, upCard)) {
+        if (!gameRules.canPlay(drawn, upCard,calledColor)) {
             return -1;
         }
 
@@ -257,7 +257,7 @@ public class Game {
 
             String card = hand.get(i);
 
-            if (!gameRules.canPlay(card, upCard)) continue;
+            if (!gameRules.canPlay(card, upCard,calledColor)) continue;
 
             int priority = cardPriority(card);
 
@@ -297,7 +297,7 @@ public class Game {
             } catch (Exception ignored) {}
 
             for (int i = 0; i < hand.size(); i++) {
-                if (hand.get(i).equals(input) && gameRules.canPlay(hand.get(i), upCard)) {
+                if (hand.get(i).equals(input) && gameRules.canPlay(hand.get(i), upCard,calledColor)) {
                     return i;
                 }
             }
