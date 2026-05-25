@@ -147,6 +147,8 @@ public class Game {
 
 
     void setupPlayers(int bots, boolean human) {
+        int players = bots + (human ? 1 : 0);
+        if (players <= 1|| players>4) return;
 
         playerNames.clear();
         humanPlayers.clear();
@@ -272,7 +274,7 @@ public class Game {
 
     int cardPriority(String card) {
 
-        String r = rank(card);
+        String r = gameRules.rank(card);
 
         if (r.equals("DRAW_TWO")) return 4;
         if (r.equals("SKIP")) return 3;
@@ -335,7 +337,7 @@ public class Game {
     // effects
     void applyCardEffect(String card) {
 
-        String rank = rank(card);
+        String rank = gameRules.rank(card);
 
         if (rank.equals("SKIP")) {
             next();
@@ -429,21 +431,8 @@ public class Game {
         return "B";
     }
 
-    // rules
-    boolean isLegal(String card, String up, String call) {
 
-        if (card.startsWith("W")) return true;
 
-        if (color(card).equals(color(up))) return true;
-
-        if (!call.isEmpty() && color(card).equals(call)) return true;
-
-        if (rank(card).equals(rank(up)) && !rank(card).equals("NUMBER")) return true;
-
-        return rank(card).equals("NUMBER")
-                && rank(up).equals("NUMBER")
-                && number(card) == number(up);
-    }
 
     String color(String card) {
         if (card.startsWith("R")) return "R";
@@ -453,23 +442,16 @@ public class Game {
         return "";
     }
 
-    String rank(String card) {
-        if (card.equals("W")) return "WILD";
-        if (card.equals("W4")) return "WILD_DRAW_FOUR";
-        if (card.endsWith("S")) return "SKIP";
-        if (card.endsWith("R")) return "REVERSE";
-        if (card.endsWith("+2")) return "DRAW_TWO";
-        return "NUMBER";
-    }
+
 
     int number(String card) {
-        if (!rank(card).equals("NUMBER")) return -1;
+        if (!gameRules.rank(card).equals("NUMBER")) return -1;
         return Integer.parseInt(card.substring(1));
     }
 
     int points(String card) {
 
-        String r = rank(card);
+        String r = gameRules.rank(card);
 
         if (r.equals("NUMBER")) return number(card);
         if (r.equals("SKIP") || r.equals("REVERSE") || r.equals("DRAW_TWO")) return 20;

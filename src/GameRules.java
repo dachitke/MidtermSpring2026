@@ -22,7 +22,7 @@ public  class GameRules {
         return "";
     }
 
-    private String rank(String card) {
+    public String rank(String card) {
         if (card.equals("W")) return "WILD";
         if (card.equals("W4")) return "WILD_DRAW_FOUR";
         if (card.endsWith("S")) return "SKIP";
