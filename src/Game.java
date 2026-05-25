@@ -54,13 +54,15 @@ public class Game {
                 chosen = handleDraw(hand, name);
             }
 
+            int playerBeforeTurn = currentPlayer;
+
             if (chosen >= 0) {
                 playCard(chosen, hand, name);
             } else {
                 next();
             }
 
-            if (isGameOver(name)) return;
+            if (isGameOver(playerBeforeTurn, name)) return;
         }
 
         if (!quiet) {
@@ -109,20 +111,20 @@ public class Game {
         applyCardEffect(card);
     }
 
-    boolean isGameOver(String name) {
-        if (!hands.get(currentPlayer).isEmpty()) return false;
+    boolean isGameOver(int playerIndex, String name){
+        if (!hands.get(playerIndex).isEmpty()) return false;
 
         int points = 0;
 
         for (int i = 0; i < hands.size(); i++) {
-            if (i == currentPlayer) continue;
+            if (i == playerIndex) continue;
 
             for (String c : hands.get(i)) {
                 points += points(c);
             }
         }
 
-        scores[currentPlayer] += points;
+        scores[playerIndex] += points;
 
         if (!quiet) {
             System.out.println(name + " wins and scores " + points);
@@ -453,11 +455,11 @@ public class Game {
 
         String r = gameRules.rank(card);
 
-        if (r.equals("NUMBER")) return number(card);
+
         if (r.equals("SKIP") || r.equals("REVERSE") || r.equals("DRAW_TWO")) return 20;
         if (r.contains("WILD")) return 50;
+        else {return Integer.valueOf(r);}
 
-        return 0;
     }
 
     // util
