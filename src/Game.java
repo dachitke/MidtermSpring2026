@@ -11,6 +11,7 @@ public class Game {
     Scanner scanner = new Scanner(System.in);
     GameRules gameRules = new GameRules();
     GameState state = new GameState();
+    BotAI botAI = new BotAI(gameRules);
 
     GameEngine engine;
 
@@ -125,7 +126,7 @@ public class Game {
             if (state.humanPlayers.get(state.currentPlayer)) {
                 state.calledColor = askColor();
             } else {
-                state.calledColor = chooseBotColor(hand);
+                state.calledColor = botAI.chooseBotColor(hand);
             }
 
             if (!quiet) {
@@ -213,7 +214,7 @@ public class Game {
     //selection
     int chooseMove(ArrayList<String> hand) {
         if (isHuman()) return askHuman(hand);
-        return chooseBotCard(hand);
+        return botAI.chooseBotCard(state, hand);
     }
 
     boolean isHuman() {
@@ -238,41 +239,6 @@ public class Game {
                 ? hand.size() - 1
                 : -1;
     }
-
-    int chooseBotCard(ArrayList<String> hand) {
-
-        int bestIndex = -1;
-        int bestPriority = -1;
-
-        for (int i = 0; i < hand.size(); i++) {
-
-            String card = hand.get(i);
-
-            if (!gameRules.canPlay(card, state.upCard,state.calledColor)) continue;
-
-            int priority = cardPriority(card);
-
-            if (priority > bestPriority) {
-                bestPriority = priority;
-                bestIndex = i;
-            }
-        }
-
-        return bestIndex;
-    }
-
-    int cardPriority(String card) {
-
-        String r = gameRules.rank(card);
-
-        if (r.equals("DRAW_TWO")) return 4;
-        if (r.equals("SKIP")) return 3;
-        if (r.equals("NUMBER")) return 2;
-        if (card.startsWith("W")) return 1;
-
-        return 0;
-    }
-
     int askHuman(ArrayList<String> hand) {
 
         while (true) {
@@ -316,48 +282,7 @@ public class Game {
 
     // effects
     void applyCardEffect(String card) {
-
-        String rank = gameRules.rank(card);
-
-        if (rank.equals("SKIP")) {
-            next();
-            next();
-
-        } else if (rank.equals("REVERSE")) {
-            state.direction *= -1;
-
-            next();
-
-        } else if (rank.equals("DRAW_TWO")) {
-
-            next();
-
-            state.hands.get(state.currentPlayer).add(draw());
-            state.hands.get(state.currentPlayer).add(draw());
-
-            if (!quiet) {
-                System.out.println(state.playerNames.get(state.currentPlayer) + " draws two.");
-            }
-
-            next();
-
-        } else if (rank.equals("WILD_DRAW_FOUR")) {
-
-            next();
-
-            for (int i = 0; i < 4; i++) {
-                state.hands.get(state.currentPlayer).add(draw());
-            }
-
-            if (!quiet) {
-                System.out.println(state.playerNames.get(state.currentPlayer) + " draws four.");
-            }
-
-            next();
-
-        } else {
-            next();
-        }
+        engine.applyCardEffect(card);
     }
 
     // turn control
@@ -389,28 +314,6 @@ public class Game {
         }
     }
 
-    String chooseBotColor(ArrayList<String> hand) {
-
-        int r = 0, y = 0, g = 0, b = 0;
-
-        for (String c : hand) {
-            switch (color(c)) {
-                case "R" -> r++;
-                case "Y" -> y++;
-                case "G" -> g++;
-                case "B" -> b++;
-            }
-        }
-
-        if (r >= y && r >= g && r >= b) return "R";
-        if (y >= r && y >= g && y >= b) return "Y";
-        if (g >= r && g >= y && g >= b) return "G";
-        return "B";
-    }
-
-
-
-
     String color(String card) {
         if (card.startsWith("R")) return "R";
         if (card.startsWith("Y")) return "Y";
@@ -418,14 +321,6 @@ public class Game {
         if (card.startsWith("B")) return "B";
         return "";
     }
-
-
-
-    int number(String card) {
-        if (!gameRules.rank(card).equals("NUMBER")) return -1;
-        return Integer.parseInt(card.substring(1));
-    }
-
     int points(String card) {
 
         String r = gameRules.rank(card);
@@ -433,7 +328,7 @@ public class Game {
 
         if (r.equals("SKIP") || r.equals("REVERSE") || r.equals("DRAW_TWO")) return 20;
         if (r.contains("WILD")) return 50;
-        else {return Integer.valueOf(r);}
+        else {return Integer.parseInt(r);}
 
     }
 
