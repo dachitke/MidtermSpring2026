@@ -313,14 +313,6 @@ public class Game {
             System.out.println("Invalid color.");
         }
     }
-
-    String color(String card) {
-        if (card.startsWith("R")) return "R";
-        if (card.startsWith("Y")) return "Y";
-        if (card.startsWith("G")) return "G";
-        if (card.startsWith("B")) return "B";
-        return "";
-    }
     int points(String card) {
 
         String r = gameRules.rank(card);

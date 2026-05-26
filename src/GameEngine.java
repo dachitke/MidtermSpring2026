@@ -30,39 +30,38 @@ public class GameEngine {
 
         return state.deck.remove(0);
     }
+    void giveCardToCurrentPlayer(int count) {
+        for (int i = 0; i < count; i++) {
+            state.hands.get(state.currentPlayer).add(draw());
+        }
+    }
     void applyCardEffect(String card) {
 
         String rank = rules.rank(card);
 
-        if (rank.equals("SKIP")) {
-            next();
-            next();
-
-        } else if (rank.equals("REVERSE")) {
-            state.direction *= -1;
-            next();
-
-        } else if (rank.equals("DRAW_TWO")) {
-
-            next();
-
-            state.hands.get(state.currentPlayer).add(draw());
-            state.hands.get(state.currentPlayer).add(draw());
-
-            next();
-
-        } else if (rank.equals("WILD_DRAW_FOUR")) {
-
-            next();
-
-            for (int i = 0; i < 4; i++) {
-                state.hands.get(state.currentPlayer).add(draw());
+        switch (rank) {
+            case "SKIP" -> {
+                next();
+                next();
             }
+            case "REVERSE" -> {
+                state.direction *= -1;
+                next();
+            }
+            case "DRAW_TWO" -> {
 
-            next();
+                next();
+                giveCardToCurrentPlayer(2);
+                next();
+            }
+            case "WILD_DRAW_FOUR" -> {
 
-        } else {
-            next();
+                next();
+                giveCardToCurrentPlayer(4);
+                next();
+            }
+            default -> next();
         }
     }
+
 }
