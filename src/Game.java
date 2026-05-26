@@ -46,8 +46,6 @@ public class Game {
 
             if (chosen >= 0) {
                 playCard(chosen, hand, name);
-            } else {
-                next();
             }
 
             if (isGameOver(playerBeforeTurn, name)) return;
@@ -66,7 +64,7 @@ public class Game {
                 System.out.println(name + " selected invalid index, draws penalty.");
             }
             hand.add(draw());
-            next();
+
             return;
         }
 
@@ -77,7 +75,6 @@ public class Game {
                 System.out.println(name + " played illegal card " + card);
             }
             hand.add(draw());
-            next();
             return;
         }
 
@@ -285,10 +282,6 @@ public class Game {
         engine.applyCardEffect(card);
     }
 
-    // turn control
-    void next() {
-        engine.next();
-    }
 
     void showTurnInfo(String name, ArrayList<String> hand) {
 

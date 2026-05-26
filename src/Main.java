@@ -1,9 +1,9 @@
 public class Main {
 
     public static void main(String[] args) {
-        int bots = 2;
+        int bots = 1;
         int games = 1;
-        boolean human = false;
+        boolean human = true;
         long seed = System.currentTimeMillis();
 
         for (int i = 0; i < args.length; i++) {

@@ -12,12 +12,16 @@ public class GameEngine {
         this.rules = rules;
         this.random = random;
     }
+
     void next() {
         state.currentPlayer += state.direction;
 
-        if (state.currentPlayer >= state.playerNames.size()) state.currentPlayer = 0;
-        if (state.currentPlayer < 0) state.currentPlayer = state.playerNames.size() - 1;
+        int n = state.playerNames.size();
+
+        if (state.currentPlayer >= n) state.currentPlayer = 0;
+        if (state.currentPlayer < 0) state.currentPlayer = n - 1;
     }
+
     String draw() {
 
         if (state.deck.isEmpty()) {
@@ -30,38 +34,42 @@ public class GameEngine {
 
         return state.deck.remove(0);
     }
+
     void giveCardToCurrentPlayer(int count) {
         for (int i = 0; i < count; i++) {
             state.hands.get(state.currentPlayer).add(draw());
         }
     }
+
     void applyCardEffect(String card) {
 
         String rank = rules.rank(card);
 
         switch (rank) {
+
             case "SKIP" -> {
                 next();
                 next();
             }
+
             case "REVERSE" -> {
                 state.direction *= -1;
                 next();
             }
-            case "DRAW_TWO" -> {
 
+            case "DRAW_TWO" -> {
                 next();
                 giveCardToCurrentPlayer(2);
                 next();
             }
-            case "WILD_DRAW_FOUR" -> {
 
+            case "WILD_DRAW_FOUR" -> {
                 next();
                 giveCardToCurrentPlayer(4);
                 next();
             }
+
             default -> next();
         }
     }
-
 }
