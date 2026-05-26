@@ -12,9 +12,13 @@ public class Game {
     GameRules gameRules = new GameRules();
     GameState state = new GameState();
 
+    GameEngine engine;
+
     public Game(int bots, boolean human, long seed) {
         this.random = new Random(seed);
         setupPlayers(bots, human);
+
+        this.engine = new GameEngine(state, gameRules, random);
     }
 
     // main game
@@ -295,16 +299,7 @@ public class Game {
 
     // draw
     String draw() {
-
-        if (state.deck.isEmpty()) {
-            state.deck.addAll(state.discard);
-            state.discard.clear();
-            Collections.shuffle(state.deck, random);
-        }
-
-        if (state.deck.isEmpty()) return "W";
-
-        return state.deck.remove(0);
+        return engine.draw();
     }
 
     String drawCardToHand(ArrayList<String> hand, String name) {
@@ -367,10 +362,7 @@ public class Game {
 
     // turn control
     void next() {
-        state.currentPlayer += state.direction;
-
-        if (state.currentPlayer >= state.playerNames.size()) state.currentPlayer = 0;
-        if (state.currentPlayer < 0) state.currentPlayer = state.playerNames.size() - 1;
+        engine.next();
     }
 
     void showTurnInfo(String name, ArrayList<String> hand) {

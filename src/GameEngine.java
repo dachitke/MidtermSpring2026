@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.Random;
 
 public class GameEngine {
@@ -10,5 +11,23 @@ public class GameEngine {
         this.state = state;
         this.rules = rules;
         this.random = random;
+    }
+    void next() {
+        state.currentPlayer += state.direction;
+
+        if (state.currentPlayer >= state.playerNames.size()) state.currentPlayer = 0;
+        if (state.currentPlayer < 0) state.currentPlayer = state.playerNames.size() - 1;
+    }
+    String draw() {
+
+        if (state.deck.isEmpty()) {
+            state.deck.addAll(state.discard);
+            state.discard.clear();
+            Collections.shuffle(state.deck, random);
+        }
+
+        if (state.deck.isEmpty()) return "W";
+
+        return state.deck.remove(0);
     }
 }
