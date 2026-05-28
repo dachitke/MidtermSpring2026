@@ -1,0 +1,224 @@
+# UNO CLI Refactoring Report
+
+## Overview
+
+This report describes the refactoring process performed on the UNO CLI project.
+The goal of the refactor was to improve code readability, maintainability, extensibility, and overall project structure without changing the core gameplay behavior.
+
+---
+
+# Objectives
+
+The refactoring process focused on the following objectives:
+
+* Reduce code duplication
+* Improve class and method organization
+* Separate gameplay logic into clearer responsibilities
+* Improve naming consistency
+* Make future feature additions easier
+* Preserve existing functionality through characterization testing
+
+---
+
+# Problems Identified in Original Implementation
+
+## 1. Large Monolithic Game Class
+
+The original implementation contained a very large `Game` class responsible for:
+
+* player management
+* deck management
+* turn handling
+* input processing
+* card validation
+* scoring
+* AI behavior
+* special card logic
+
+This violated the Single Responsibility Principle and made the code difficult to maintain.
+
+---
+
+## 2. Repeated Conditional Logic
+
+Many gameplay checks used repeated `if-else` structures for:
+
+* card color checking
+* card type handling
+* special effects
+* wildcard processing
+
+This increased complexity and reduced readability.
+
+---
+
+## 3. Weak Separation of Concerns
+
+Game state, UI interaction, and rule logic were tightly coupled together.
+This made testing and extension difficult.
+
+---
+
+## 4. Magic Values and Hardcoded Strings
+
+Card names, colors, and actions were often represented directly as raw strings throughout the codebase.
+
+Examples:
+
+* `"RED"`
+* `"DRAW_TWO"`
+* `"SKIP"`
+
+This increased risk of bugs caused by typos and inconsistent usage.
+
+---
+
+# Refactoring Changes
+
+## 1. Extracted Helper Methods
+
+Large methods were divided into smaller reusable methods.
+
+Examples include:
+
+* turn progression helpers
+* card validation methods
+* deck reshuffling logic
+* winner checking
+* special effect handling
+
+Benefits:
+
+* improved readability
+* easier debugging
+* easier unit testing
+
+---
+## 2. Centralized Card Logic
+
+Card effect handling was consolidated into dedicated logic sections instead of being spread across multiple gameplay methods.
+
+This reduced duplicated code and simplified future rule extensions.
+
+---
+
+## 3. Better Turn Management
+
+Turn handling logic was reorganized to clearly support:
+
+* normal direction
+* reverse cards
+* skipped turns
+* draw penalties
+* AI turns
+* multiplayer progression
+
+Benefits:
+
+* easier debugging
+* cleaner gameplay flow
+
+---
+
+## 4. Reduced Code Duplication
+
+Repeated blocks for:
+
+* drawing cards
+* validating playable cards
+* applying special actions
+
+were extracted into reusable methods.
+
+Benefits:
+
+* smaller codebase
+* lower maintenance cost
+
+---
+
+## 5. Improved Data Organization
+
+Collections such as:
+
+* player hands
+* deck
+* discard pile
+* player metadata
+
+were reorganized for better clarity and easier access.
+
+---
+
+# Characterization Testing
+
+Before refactoring, characterization testing was used to preserve existing behavior.
+
+The following gameplay behaviors were verified:
+
+* turn progression
+* card drawing
+* reverse card handling
+* skip card behavior
+* draw two behavior
+* wild card behavior
+* winner detection
+* deck reshuffling
+* AI move handling
+
+This ensured that refactoring did not unintentionally change gameplay functionality.
+
+---
+
+# Benefits Achieved
+
+## Maintainability
+
+The project is now significantly easier to modify and debug.
+
+## Readability
+
+Smaller methods and improved naming make the code easier to understand.
+
+## Extensibility
+
+The new structure allows easier addition of:
+
+* new game modes
+* additional card types
+* improved AI
+* GUI integration
+* networking features
+
+## Reliability
+
+Cleaner logic organization reduces the likelihood of introducing bugs during future development.
+
+---
+
+# Remaining Improvement Opportunities
+
+Potential future improvements include:
+
+* introducing dedicated `Card`, `Deck`, and `Player` classes
+* replacing string-based cards with enums or objects
+* adding automated unit tests
+* separating CLI UI from game engine logic
+* implementing save/load functionality
+* adding multiplayer networking
+* improving AI strategy
+
+---
+
+# Conclusion
+
+The refactoring successfully improved the internal structure of the UNO CLI project while preserving gameplay behavior.
+
+The updated codebase is now:
+
+* easier to understand
+* easier to extend
+* easier to debug
+* more maintainable for future development
+
+The project is better prepared for future feature additions and long-term maintenance.
