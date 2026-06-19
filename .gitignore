@@ -1,1 +1,12 @@
 out/
+
+# Maven build output
+target/
+
+# Runtime logs
+logs/
+*.log
+
+# IDE configuration
+.idea/
+*.iml

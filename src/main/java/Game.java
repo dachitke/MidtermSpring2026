@@ -3,7 +3,12 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Game {
+
+    private static final Logger log = LoggerFactory.getLogger(Game.class);
 
     boolean quiet = false;
 
@@ -27,12 +32,19 @@ public class Game {
 
         startRoundSetup();
 
+        log.info("Game start: players={}, startingPlayer={}, upCard={}",
+                state.playerNames, state.playerNames.get(state.currentPlayer), state.upCard);
+
         int guard = 0;
 
         while (guard++ < 3000) {
 
             String name = state.playerNames.get(state.currentPlayer);
             ArrayList<String> hand = state.hands.get(state.currentPlayer);
+
+            log.info("Turn: player={}, handSize={}, upCard={}, calledColor={}",
+                    name, hand.size(), state.upCard,
+                    state.calledColor.isEmpty() ? "-" : state.calledColor);
 
             showTurnInfo(name, hand);
 
@@ -51,6 +63,8 @@ public class Game {
             if (isGameOver(playerBeforeTurn, name)) return;
         }
 
+        log.warn("Game end: stopped at safety limit after {} turns", guard);
+
         if (!quiet) {
             System.out.println("Game stopped at safety limit.");
         }
@@ -60,6 +74,8 @@ public class Game {
     void playCard(int chosen, ArrayList<String> hand, String name) {
 
         if (chosen >= hand.size()) {
+            log.info("Invalid input: player={} selected invalid index {} (handSize={}), draws penalty",
+                    name, chosen, hand.size());
             if (!quiet) {
                 System.out.println(name + " selected invalid index, draws penalty.");
             }
@@ -71,6 +87,8 @@ public class Game {
         String card = hand.get(chosen);
 
         if (!gameRules.canPlay(card, state.upCard,state.calledColor)) {
+            log.info("Invalid input: player={} attempted illegal card {} on upCard={}, draws penalty",
+                    name, card, state.upCard);
             if (!quiet) {
                 System.out.println(name + " played illegal card " + card);
             }
@@ -82,6 +100,8 @@ public class Game {
         state.discard.add(state.upCard);
         state.upCard = card;
         state.calledColor = "";
+
+        log.info("Card played: player={}, card={}, remainingHand={}", name, card, hand.size());
 
         if (!quiet) {
             System.out.println(name + " plays " + card);
@@ -110,6 +130,9 @@ public class Game {
         }
 
         state.scores[playerIndex] += points;
+
+        log.info("Round/game end: winner={}, pointsScored={}, totalScore={}",
+                name, points, state.scores[playerIndex]);
 
         if (!quiet) {
             System.out.println(name + " wins and scores " + points);
@@ -256,6 +279,7 @@ public class Game {
                 }
             }
 
+            log.info("Invalid input: human entered '{}' which is not a valid index or playable card", input);
             System.out.println("Invalid move.");
         }
     }
@@ -269,6 +293,8 @@ public class Game {
 
         String drawn = draw();
         hand.add(drawn);
+
+        log.info("Card drawn: player={}, card={}, handSize={}", name, drawn, hand.size());
 
         if (!quiet) {
             System.out.println(name + " draws " + drawn);
