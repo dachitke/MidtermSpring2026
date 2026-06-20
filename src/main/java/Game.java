@@ -1,10 +1,17 @@
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import persistence.GameResult;
+import persistence.RoundResult;
 
 public class Game {
 
@@ -20,6 +27,8 @@ public class Game {
 
     GameEngine engine;
 
+    private LocalDateTime startedAt;
+
     public Game(int bots, boolean human, long seed) {
         this.random = new Random(seed);
         setupPlayers(bots, human);
@@ -28,9 +37,10 @@ public class Game {
     }
 
     // main game
-    public void playGame() {
+    public GameResult playGame() {
 
         startRoundSetup();
+        startedAt = LocalDateTime.now();
 
         log.info("Game start: players={}, startingPlayer={}, upCard={}",
                 state.playerNames, state.playerNames.get(state.currentPlayer), state.upCard);
@@ -60,7 +70,9 @@ public class Game {
                 playCard(chosen, hand, name);
             }
 
-            if (isGameOver(playerBeforeTurn, name)) return;
+            if (isGameOver(playerBeforeTurn, name)) {
+                return buildResult(name);
+            }
         }
 
         log.warn("Game end: stopped at safety limit after {} turns", guard);
@@ -68,6 +80,25 @@ public class Game {
         if (!quiet) {
             System.out.println("Game stopped at safety limit.");
         }
+
+        return buildResult(null);
+    }
+
+    /** Captures the finished game's data for the persistence layer (no SQL here). */
+    GameResult buildResult(String winnerName) {
+        Map<String, Integer> scores = new LinkedHashMap<>();
+        for (int i = 0; i < state.playerNames.size(); i++) {
+            scores.put(state.playerNames.get(i), state.scores[i]);
+        }
+
+        RoundResult round = new RoundResult(1, winnerName, scores);
+
+        return new GameResult(
+                startedAt,
+                LocalDateTime.now(),
+                new ArrayList<>(state.playerNames),
+                winnerName,
+                List.of(round));
     }
 
     // flow

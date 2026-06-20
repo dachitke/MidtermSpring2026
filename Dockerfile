@@ -18,7 +18,9 @@ WORKDIR /app
 
 # Logback writes game events here (see src/main/resources/logback.xml).
 ENV UNO_LOG_DIR=/app/logs
-RUN mkdir -p /app/logs
+# Game history (H2 database) is written under /app/data. Mount a volume there
+# (e.g. -v "$PWD/data:/app/data") to keep history across container runs.
+RUN mkdir -p /app/logs /app/data
 
 COPY --from=build /app/target/midterm-uno-cli.jar app.jar
 

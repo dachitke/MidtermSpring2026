@@ -7,6 +7,11 @@ target/
 logs/
 *.log
 
+# H2 embedded database files
+data/
+*.mv.db
+*.trace.db
+
 # IDE configuration
 .idea/
 *.iml

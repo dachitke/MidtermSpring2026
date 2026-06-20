@@ -1,6 +1,10 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import persistence.GameHistoryRepository;
+import persistence.GameResult;
+import persistence.PersistenceManager;
+
 public class Main {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
@@ -10,6 +14,8 @@ public class Main {
         int games = 1;
         boolean human = false;
         long seed = System.currentTimeMillis();
+        boolean statsOnly = false;
+        boolean persist = true;
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("--bots") && i + 1 < args.length) {
@@ -20,20 +26,61 @@ public class Main {
                 human = true;
             } else if (args[i].equals("--seed") && i + 1 < args.length) {
                 seed = Long.parseLong(args[++i]);
+            } else if (args[i].equals("--stats")) {
+                statsOnly = true;
+            } else if (args[i].equals("--no-db")) {
+                persist = false;
             }
         }
 
-        log.info("Application start: bots={}, games={}, human={}, seed={}", bots, games, human, seed);
+        // Report mode: print persisted history and exit without playing.
+        if (statsOnly) {
+            log.info("Stats mode: printing persisted game history");
+            try {
+                GameHistoryRepository repo = new GameHistoryRepository(PersistenceManager.getEntityManagerFactory());
+                HistoryReport.printAll(repo, 10);
+            } finally {
+                PersistenceManager.close();
+            }
+            return;
+        }
 
-        for (int g = 1; g <= games; g++) {
-            System.out.println("\n=== Game " + g + " ===");
+        log.info("Application start: bots={}, games={}, human={}, seed={}, persist={}",
+                bots, games, human, seed, persist);
 
-            log.info("Starting game {} of {}", g, games);
+        GameHistoryRepository repo = persist
+                ? new GameHistoryRepository(PersistenceManager.getEntityManagerFactory())
+                : null;
 
-            Game game = new Game(bots, human, seed);
-            game.playGame();
+        try {
+            for (int g = 1; g <= games; g++) {
+                System.out.println("\n=== Game " + g + " ===");
+
+                log.info("Starting game {} of {}", g, games);
+
+                Game game = new Game(bots, human, seed);
+                GameResult result = game.playGame();
+
+                if (repo != null) {
+                    persistResult(repo, result);
+                }
+            }
+        } finally {
+            if (persist) {
+                PersistenceManager.close();
+            }
         }
 
         log.info("Application end: completed {} game(s)", games);
+    }
+
+    /** Persistence failures must never break gameplay. */
+    private static void persistResult(GameHistoryRepository repo, GameResult result) {
+        try {
+            Long id = repo.save(result);
+            log.info("Persisted game id={}, winner={}", id, result.getWinnerName());
+        } catch (RuntimeException e) {
+            log.warn("Failed to persist game result: {}", e.toString());
+        }
     }
 }

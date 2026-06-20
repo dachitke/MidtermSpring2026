@@ -1,7 +1,8 @@
 # Midterm UNO CLI
 
 A standalone CLI UNO-like game, built as a standard Maven (Java 21) project with
-automated tests, file-based logging, and Docker support.
+automated tests, file-based logging, Docker support, and persistent game history
+(Hibernate/JPA + H2).
 
 ## Requirements
 
@@ -72,6 +73,8 @@ java -jar target/midterm-uno-cli.jar --human --bots 2 --games 1
 | `--games N` | number of games to play | `1` |
 | `--human` | add a human player | off |
 | `--seed N` | RNG seed for reproducible games | current time |
+| `--stats` | print persisted game-history reports and exit | off |
+| `--no-db` | play without persisting results | off |
 
 Card input examples (interactive mode):
 
@@ -125,6 +128,30 @@ on the host, mount a volume:
 ```bash
 docker run --rm -v "$(pwd)/logs:/app/logs" midterm-uno-cli
 ```
+
+## Game History & Statistics
+
+Game results are persisted with **Hibernate/JPA** to an embedded **H2** database
+(`./data/uno.mv.db`). After every game the app stores player names, start/end
+timestamps, rounds played, per-player scores, and the winner.
+
+View the reports:
+
+```bash
+java -jar target/midterm-uno-cli.jar --stats
+```
+
+This prints **recent games**, **player win counts**, and **highest scores**.
+Typical flow:
+
+```bash
+java -jar target/midterm-uno-cli.jar --bots 3 --games 5   # play (auto-persists)
+java -jar target/midterm-uno-cli.jar --stats              # view history
+```
+
+Database/ORM details, schema, configuration (including how to point at another
+database via environment variables), and how to run the persistence tests are
+documented in [`docs/database.md`](docs/database.md).
 
 ## Rules
 
