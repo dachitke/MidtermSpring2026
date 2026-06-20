@@ -14,6 +14,7 @@ public class Main {
         int games = 1;
         boolean human = false;
         long seed = System.currentTimeMillis();
+        int target = 500;
         boolean statsOnly = false;
         boolean persist = true;
 
@@ -22,6 +23,8 @@ public class Main {
                 bots = Integer.parseInt(args[++i]);
             } else if (args[i].equals("--games") && i + 1 < args.length) {
                 games = Integer.parseInt(args[++i]);
+            } else if (args[i].equals("--target") && i + 1 < args.length) {
+                target = Integer.parseInt(args[++i]);
             } else if (args[i].equals("--human")) {
                 human = true;
             } else if (args[i].equals("--seed") && i + 1 < args.length) {
@@ -45,8 +48,8 @@ public class Main {
             return;
         }
 
-        log.info("Application start: bots={}, games={}, human={}, seed={}, persist={}",
-                bots, games, human, seed, persist);
+        log.info("Application start: bots={}, games={}, human={}, seed={}, target={}, persist={}",
+                bots, games, human, seed, target, persist);
 
         GameHistoryRepository repo = persist
                 ? new GameHistoryRepository(PersistenceManager.getEntityManagerFactory())
@@ -54,14 +57,14 @@ public class Main {
 
         try {
             for (int g = 1; g <= games; g++) {
-                System.out.println("\n=== Game " + g + " ===");
+                System.out.println("\n=== Game " + g + " (to " + target + " points) ===");
 
                 log.info("Starting game {} of {}", g, games);
 
-                Game game = new Game(bots, human, seed);
+                Game game = new Game(bots, human, seed + g, target);
                 GameResult result = game.playGame();
 
-                if (repo != null) {
+                if (repo != null && result != null) {
                     persistResult(repo, result);
                 }
             }

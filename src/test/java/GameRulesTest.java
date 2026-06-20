@@ -45,4 +45,28 @@ public class GameRulesTest {
     void sameValueDifferentColorIsLegalOnlyIfNumber() {
         assertTrue(rules.canPlay("G9", "R9",""));
     }
+
+    @Test
+    void matchByActionTypeIsLegal() {
+        assertTrue(rules.canPlay("GS", "RS", ""));   // skip on skip
+        assertTrue(rules.canPlay("B+2", "Y+2", "")); // draw two on draw two
+    }
+
+    @Test
+    void calledColorAfterWildControlsLegality() {
+        // Top card is a wild; the called colour is green.
+        assertTrue(rules.canPlay("G5", "W", "G"));
+        assertFalse(rules.canPlay("B5", "W", "G"));
+    }
+
+    @Test
+    void cardValuesFollowStandardScoring() {
+        assertEquals(5, rules.cardValue("R5"));
+        assertEquals(0, rules.cardValue("G0"));
+        assertEquals(20, rules.cardValue("YS"));
+        assertEquals(20, rules.cardValue("BR"));
+        assertEquals(20, rules.cardValue("G+2"));
+        assertEquals(50, rules.cardValue("W"));
+        assertEquals(50, rules.cardValue("W4"));
+    }
 }

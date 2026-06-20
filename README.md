@@ -1,8 +1,13 @@
-# Midterm UNO CLI
+# UNO CLI
 
-A standalone CLI UNO-like game, built as a standard Maven (Java 21) project with
-automated tests, file-based logging, Docker support, and persistent game history
-(Hibernate/JPA + H2).
+A standalone command-line UNO game built as a standard Maven (Java 21) project.
+It supports a fuller set of UNO rules (action cards, Wilds, UNO calls, round
+scoring, and multi-round play to a target score) with the game logic separated
+from the console so rules are testable without a terminal. It also includes
+file-based logging, Docker support, and persistent game history (Hibernate/JPA + H2).
+
+Supported rules are documented in [`docs/rules-supported.md`](docs/rules-supported.md)
+and the design is described in [`docs/final-report.md`](docs/final-report.md).
 
 ## Requirements
 
@@ -47,22 +52,25 @@ Build a self-contained executable jar at `target/midterm-uno-cli.jar`
 
 ## Local Run
 
-Run the packaged jar:
+A "game" is a **match**: rounds are played until a player reaches the target
+score (default 500), and the highest total wins.
+
+Run the packaged jar (bot-only match to a short target):
 
 ```bash
-java -jar target/midterm-uno-cli.jar --bots 3 --games 1
+java -jar target/midterm-uno-cli.jar --bots 3 --target 200
 ```
 
 Or run directly from sources without packaging:
 
 ```bash
-./mvnw exec:java -Dexec.args="--bots 3 --games 1"
+./mvnw exec:java -Dexec.args="--bots 3 --target 200"
 ```
 
-Interactive game (you + 2 bots):
+Interactive game (you + 2 bots, full 500-point match):
 
 ```bash
-java -jar target/midterm-uno-cli.jar --human --bots 2 --games 1
+java -jar target/midterm-uno-cli.jar --human --bots 2 --target 500
 ```
 
 ### Command-line options
@@ -70,19 +78,27 @@ java -jar target/midterm-uno-cli.jar --human --bots 2 --games 1
 | Flag | Meaning | Default |
 |------|---------|---------|
 | `--bots N` | number of bot players | `3` |
-| `--games N` | number of games to play | `1` |
+| `--target N` | points needed to win the match | `500` |
+| `--games N` | number of matches to play | `1` |
 | `--human` | add a human player | off |
 | `--seed N` | RNG seed for reproducible games | current time |
 | `--stats` | print persisted game-history reports and exit | off |
 | `--no-db` | play without persisting results | off |
 
-Card input examples (interactive mode):
+Total players (bots + human) must be between 2 and 4.
+
+On your turn the console shows the up card and your hand as `index:card`. Enter:
 
 ```text
-R5   red 5        YS   yellow skip     BR   blue reverse
-G+2  green draw two   W    wild        W4   wild draw four
-draw draw a card
+0           play the card at hand index 0
+R5          play a specific card (red 5)
+DRAW        draw a card
+R/Y/G/B     choose a color after a Wild
+y / n       call UNO when down to one card
 ```
+
+Card encoding: `R5` red 5, `YS` yellow skip, `BR` blue reverse, `G+2` green draw
+two, `W` wild, `W4` wild draw four.
 
 ## Docker Build
 
@@ -104,13 +120,13 @@ docker run --rm midterm-uno-cli
 Pass game options as arguments:
 
 ```bash
-docker run --rm midterm-uno-cli --bots 3 --games 1 --seed 42
+docker run --rm midterm-uno-cli --bots 3 --target 200 --seed 42
 ```
 
 Interactive game (allocate a TTY for stdin):
 
 ```bash
-docker run --rm -it midterm-uno-cli --human --bots 2 --games 1
+docker run --rm -it midterm-uno-cli --human --bots 2 --target 500
 ```
 
 ## Logging
@@ -145,7 +161,7 @@ This prints **recent games**, **player win counts**, and **highest scores**.
 Typical flow:
 
 ```bash
-java -jar target/midterm-uno-cli.jar --bots 3 --games 5   # play (auto-persists)
+java -jar target/midterm-uno-cli.jar --bots 3 --target 200   # play (auto-persists)
 java -jar target/midterm-uno-cli.jar --stats              # view history
 ```
 

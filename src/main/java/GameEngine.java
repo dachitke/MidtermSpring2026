@@ -54,7 +54,14 @@ public class GameEngine {
 
             case "REVERSE" -> {
                 state.direction *= -1;
-                next();
+                if (state.playerNames.size() == 2) {
+                    // With two players Reverse acts like Skip: the opponent is
+                    // skipped and the player who reversed plays again.
+                    next();
+                    next();
+                } else {
+                    next();
+                }
             }
 
             case "DRAW_TWO" -> {

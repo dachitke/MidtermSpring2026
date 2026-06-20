@@ -30,4 +30,17 @@ public  class GameRules {
         if (card.endsWith("+2")) return "DRAW_TWO";
         return String.valueOf(card.charAt(card.length() - 1));
     }
+
+    /** Standard UNO scoring value of a card. */
+    public int cardValue(String card) {
+        String r = rank(card);
+
+        if (r.equals("SKIP") || r.equals("REVERSE") || r.equals("DRAW_TWO")) {
+            return 20;
+        }
+        if (r.equals("WILD") || r.equals("WILD_DRAW_FOUR")) {
+            return 50;
+        }
+        return Integer.parseInt(r);
+    }
 }

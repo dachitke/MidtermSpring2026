@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.List;
 
 public class BotAI {
 
@@ -8,7 +8,7 @@ public class BotAI {
         this.rules = rules;
     }
 
-    int chooseBotCard(GameState state, ArrayList<String> hand) {
+    int chooseBotCard(GameState state, List<String> hand) {
 
         int bestIndex = -1;
         int bestPriority = -1;
@@ -42,7 +42,7 @@ public class BotAI {
         return 0;
     }
 
-    String chooseBotColor(ArrayList<String> hand) {
+    String chooseBotColor(List<String> hand) {
 
         int r = 0, y = 0, g = 0, b = 0;
 
